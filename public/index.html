@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IndoNav AR Navigation</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>IndoNav - AR Navigation</h1>
+      <p>Geolocation, routing, custom map markers, and AR objects.</p>
+    </header>
+
+    <main>
+      <section class="controls">
+        <div class="card">
+          <h2>Location</h2>
+          <button id="locateBtn" type="button">Use My Location</button>
+          <p id="locationText">No GPS position yet.</p>
+        </div>
+
+        <div class="card">
+          <h2>Create Marker</h2>
+          <form id="markerForm">
+            <label>
+              Name
+              <input id="markerName" name="name" required />
+            </label>
+            <label>
+              Type
+              <input id="markerType" name="markerType" placeholder="poi, shop, danger..." />
+            </label>
+            <label>
+              Latitude
+              <input id="markerLat" name="latitude" type="number" step="0.0000001" required />
+            </label>
+            <label>
+              Longitude
+              <input id="markerLng" name="longitude" type="number" step="0.0000001" required />
+            </label>
+            <button type="submit">Add Marker</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h2>Create AR Object</h2>
+          <form id="arForm">
+            <label>
+              Title
+              <input id="arTitle" name="title" required />
+            </label>
+            <label>
+              Object Type
+              <input id="arType" name="objectType" value="cube" />
+            </label>
+            <label>
+              Latitude
+              <input id="arLat" name="latitude" type="number" step="0.0000001" required />
+            </label>
+            <label>
+              Longitude
+              <input id="arLng" name="longitude" type="number" step="0.0000001" required />
+            </label>
+            <button type="submit">Add AR Object</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h2>Route Search</h2>
+          <form id="routeForm">
+            <label>
+              Destination (text geocode)
+              <input id="routeDestination" name="destination" placeholder="Eindhoven station" required />
+            </label>
+            <button type="submit">Build Route from My Position</button>
+          </form>
+          <p id="routeStats">No active route.</p>
+        </div>
+      </section>
+
+      <section class="map-wrap">
+        <div id="map"></div>
+        <div id="arHud" class="hud">
+          <h3>AR Object Preview</h3>
+          <p>Select an AR object marker to render a 3D preview.</p>
+          <canvas id="arCanvas"></canvas>
+        </div>
+      </section>
+    </main>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="https://unpkg.com/three@0.168.0/build/three.min.js"></script>
+    <script src="/js/app.js"></script>
+  </body>
+  </html>
