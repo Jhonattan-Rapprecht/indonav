@@ -13,7 +13,7 @@ IndoNav is a JavaScript navigation starter app built with **Node.js + Express + 
 ## Tech stack
 
 - Backend: Node.js, Express, MySQL (`mysql2`)
-- Frontend: Vanilla JS, Leaflet, Three.js
+- Frontend: Vanilla JS, Tailwind CSS v4 (compiled locally), Leaflet, Three.js
 - External map/location services: OpenStreetMap, OSRM, Nominatim
 
 ## Project structure
@@ -86,7 +86,37 @@ The app auto-creates database/tables on startup:
 - `GET /api/geocode?query=...`
 - `GET /api/route?startLat=...&startLng=...&endLat=...&endLng=...`
 
-## Notes
+## Dashboard
 
+- Responsive spatial workspace with live saved-item counts, a map, route planner,
+  and filterable marker/AR-object collection.
+- Click the map to select coordinates, then use **Create marker** or the **+** in
+  Spatial Studio to open the creation dialog.
+- Use **My location** before building a driving route. Layer checkboxes control
+  marker and AR-object visibility; the expand button fits the map to saved items.
+- Select an AR object on the map or in the collection for an animated 3D preview.
+  This is a preview, not a camera-based AR session.
+- Requests display busy states and inline notifications; motion respects the
+  operating system's reduced-motion preference.
+- Use the moon/sun button in the top-right toolbar (beside the avatar) to switch
+  between white and dark themes. The theme follows your system preference until
+  you choose one, then remembers it in your browser and syncs it across tabs.
+  Dark mode styles the dashboard, dialogs, map controls, and map tiles without
+  changing the map provider or reloading your workspace.
+
+### Frontend build
+
+`npm start` and `npm run dev` build the frontend assets automatically.
+After editing `styles/dashboard.css`, the HTML, or JavaScript, run `npm run build`.
+Tailwind generates `public/css/style.css`; edit the source stylesheet, not the
+generated output. Three.js is copied from the installed package into the ignored
+`public/vendor` directory, avoiding the obsolete CDN script.
+
+## Service notes
+
+- Map tiles use OpenStreetMap's canonical HTTPS endpoint and browser caching.
+- The page explicitly sends its origin as the referrer for cross-origin tile requests,
+  including when opened through a VS Code development tunnel. Do not disable referrers
+  with browser privacy extensions: OpenStreetMap requires them for web apps.
 - Browser geolocation requires HTTPS in production (localhost works for development).
 - OSRM/Nominatim are public demo services; for production, run/subscribe to dedicated providers.

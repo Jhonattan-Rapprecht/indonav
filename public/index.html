@@ -3,104 +3,97 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>IndoNav AR Navigation</title>
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-      crossorigin=""
-    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content="#101918" />
+    <title>IndoNav | Spatial workspace</title>
+    <script src="/js/theme.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
-    <header>
-      <h1>IndoNav - AR Navigation</h1>
-      <p>Geolocation, routing, custom map markers, and AR objects.</p>
-    </header>
-
-    <main>
-      <section class="controls">
-        <div class="card">
-          <h2>Location</h2>
-          <button id="locateBtn" type="button">Use My Location</button>
-          <p id="locationText">No GPS position yet.</p>
+    <svg class="hidden" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <symbol id="i-map" viewBox="0 0 24 24"><path d="m9 18-6 3V6l6-3 6 3 6-3v15l-6 3-6-3Zm0 0V3m6 18V6"/></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+      <symbol id="i-cube" viewBox="0 0 24 24"><path d="m12 3 9 5v9l-9 5-9-5V8l9-5Zm0 9 9-4M12 12 3 8m9 4v10m-5-17 9 5"/></symbol>
+      <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="5" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v8a4 4 0 0 0 4 4h6M8 5h6a4 4 0 0 1 0 8h-4"/></symbol>
+      <symbol id="i-crosshair" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+      <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 10 6-10 6L2 9l10-6ZM2 13l10 6 10-6M2 17l10 6 10-6"/></symbol>
+      <symbol id="i-expand" viewBox="0 0 24 24"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 13A8.5 8.5 0 0 1 11 3.5 8.5 8.5 0 1 0 20.5 13Z"/></symbol>
+    </svg>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a href="/" class="brand" aria-label="IndoNav home"><span class="brand-mark"><svg class="icon"><use href="#i-cube"/></svg></span>indo<span class="text-emerald-300">nav</span><span class="brand-dot"></span></a>
+        <div class="workspace-chip"><span class="workspace-avatar">IN</span><div><strong>Spatial workspace</strong><span>Personal workspace</span></div><span class="text-slate-400">⌄</span></div>
+        <p class="eyebrow mt-8 mb-3 px-3">WORKSPACE</p>
+        <nav class="nav-list" aria-label="Workspace navigation">
+          <button class="nav-item is-active" data-view="explore" aria-current="page"><svg class="icon"><use href="#i-map"/></svg>Overview<span class="nav-indicator"></span></button>
+          <button class="nav-item" data-view="routes"><svg class="icon"><use href="#i-route"/></svg>Route planner</button>
+          <button class="nav-item" data-view="objects"><svg class="icon"><use href="#i-cube"/></svg>Spatial objects<span id="navObjectCount" class="nav-count">0</span></button>
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="sidebar-note"><span class="eyebrow text-emerald-300">BUILT FOR THE REAL WORLD</span><h3>A new layer of possibility.</h3><p>Place ideas on the map. Bring them into a new dimension.</p><svg class="icon"><use href="#i-layers"/></svg></div>
+          <div class="profile"><span class="profile-avatar">IN</span><div><strong>Your workspace</strong><span>Local development</span></div><span class="status-dot"></span></div>
         </div>
+      </aside>
 
-        <div class="card">
-          <h2>Create Marker</h2>
-          <form id="markerForm">
-            <label>
-              Name
-              <input id="markerName" name="name" required />
-            </label>
-            <label>
-              Type
-              <input id="markerType" name="markerType" placeholder="poi, shop, danger..." />
-            </label>
-            <label>
-              Latitude
-              <input id="markerLat" name="latitude" type="number" step="0.0000001" required />
-            </label>
-            <label>
-              Longitude
-              <input id="markerLng" name="longitude" type="number" step="0.0000001" required />
-            </label>
-            <button type="submit">Add Marker</button>
-          </form>
+      <main class="main-content">
+        <header class="topbar"><div class="flex items-center gap-3"><span class="text-slate-400">Workspace</span><span class="text-slate-300">/</span><span id="breadcrumb">Overview</span></div><div class="topbar-actions"><span class="environment-badge"><span class="status-dot"></span>Development</span><button id="themeToggle" class="icon-btn theme-toggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode"><svg class="icon theme-moon" aria-hidden="true"><use href="#i-moon"/></svg><svg class="icon theme-sun" aria-hidden="true"><use href="#i-sun"/></svg></button><span class="top-avatar">IN</span></div></header>
+        <div class="dashboard">
+          <section class="page-heading">
+            <div><p class="eyebrow text-teal-700 mb-2">YOUR WORLD, CONNECTED</p><h1>Spatial overview<span class="heading-dot">.</span></h1><p class="subtitle">Navigate the world. Create what comes next.</p></div>
+            <button class="btn btn-primary" id="newMarkerBtn"><svg class="icon"><use href="#i-plus"/></svg>Create marker</button>
+          </section>
+          <section class="stats-grid" aria-label="Workspace statistics">
+            <article class="stat-card"><span class="stat-icon mint"><svg class="icon"><use href="#i-pin"/></svg></span><div><span class="stat-label">Custom markers</span><strong id="markerCount">--</strong></div><span class="stat-footnote">Map annotations</span></article>
+            <article class="stat-card"><span class="stat-icon violet"><svg class="icon"><use href="#i-cube"/></svg></span><div><span class="stat-label">Spatial objects</span><strong id="objectCount">--</strong></div><span class="stat-footnote">3D-ready assets</span></article>
+            <article class="stat-card"><span class="stat-icon sand"><svg class="icon"><use href="#i-route"/></svg></span><div><span class="stat-label">Route distance</span><strong id="distanceValue">--<small>km</small></strong></div><span id="durationValue" class="stat-footnote">No active route</span></article>
+            <article class="stat-card"><span class="stat-icon sky"><svg class="icon"><use href="#i-crosshair"/></svg></span><div><span class="stat-label">Your position</span><strong id="positionValue" class="text-value">Not located</strong></div><span id="accuracyValue" class="stat-footnote">GPS permission required</span></article>
+          </section>
+
+          <div class="workspace-grid">
+            <section class="map-card" aria-label="Interactive map">
+              <div class="map-header"><div><h2>Live map <span class="small-badge">EXPLORER</span></h2><p>Click anywhere to set a placement point.</p></div><button class="icon-btn" id="fitMapBtn" aria-label="Fit map to saved items" title="Fit to saved items"><svg class="icon"><use href="#i-expand"/></svg></button></div>
+              <div class="map-stage"><div id="map"></div><div class="map-floating"><span class="map-chip"><span class="status-dot"></span><span id="mapCenterLabel">Eindhoven, Netherlands</span></span><button class="btn btn-map" id="locateBtn"><svg class="icon"><use href="#i-crosshair"/></svg>My location</button></div><p id="tileStatus" class="tile-status" role="status" hidden></p></div>
+              <div class="map-footer"><div class="flex items-center gap-4"><label class="layer-toggle"><input id="markersToggle" type="checkbox" checked/><span class="legend-dot bg-teal-600"></span>Markers</label><label class="layer-toggle"><input id="objectsToggle" type="checkbox" checked/><span class="legend-dot bg-violet-500"></span>AR objects</label></div><span id="placementText">No point selected</span></div>
+            </section>
+            <aside class="inspector">
+              <section class="panel route-panel" id="routePanel">
+                <div class="panel-title"><span class="mini-icon"><svg class="icon"><use href="#i-route"/></svg></span><h2>Find your way</h2><span class="small-badge">DRIVING</span></div>
+                <p class="panel-description">From where you are to where you want to be.</p>
+                <form id="routeForm"><div class="route-fields"><span class="route-origin-dot"></span><div class="origin-field"><span class="field-caption">STARTING POINT</span><p id="locationText">Use My location to get started</p></div><label class="destination-label"><span class="field-caption">DESTINATION</span><input id="routeDestination" placeholder="Search a place or address" required maxlength="200"/></label></div><button class="btn btn-dark w-full mt-4" type="submit">Build route<svg class="icon"><use href="#i-arrow"/></svg></button></form>
+                <p id="routeStats" class="route-summary" aria-live="polite">Your next journey starts here.</p><button id="clearRouteBtn" class="text-button" hidden>Clear route</button>
+              </section>
+              <section class="preview-panel" id="arHud"><div class="flex items-center justify-between"><span class="eyebrow text-emerald-300">SPATIAL STUDIO</span><span class="preview-badge">3D PREVIEW</span></div><h2 id="previewTitle">Beyond the map.</h2><p id="previewDescription">Select a saved AR object to explore it in 3D.</p><div class="preview-stage"><canvas id="arCanvas" aria-label="3D object preview" hidden></canvas><div id="previewPlaceholder" class="wire-cube" aria-hidden="true"><svg viewBox="0 0 140 150"><path d="m70 12 53 30v62l-53 31-53-31V42L70 12Zm0 61 53-31M70 73 17 42m53 31v62M43 27l53 31v62M17 73l53 31 53-31M43 120V58l54-31"/></svg></div></div><div class="preview-footer"><span><span class="status-dot"></span><span id="previewState">Awaiting selection</span></span><button id="newObjectBtn" class="preview-action" aria-label="Create AR object"><svg class="icon"><use href="#i-plus"/></svg></button></div></section>
+            </aside>
+          </div>
+          <section class="library panel" id="libraryPanel"><div class="library-heading"><div><p class="eyebrow text-teal-700 mb-1">ON YOUR MAP</p><h2>Spatial collection</h2></div><div class="segmented" aria-label="Collection filter"><button class="is-active" data-filter="all" aria-pressed="true">All items</button><button data-filter="marker" aria-pressed="false">Markers</button><button data-filter="object" aria-pressed="false">AR objects</button></div></div><div id="collection" class="collection-grid"><p class="empty-state">Loading your spatial collection...</p></div></section>
+          <footer class="dashboard-footer"><span>IndoNav Spatial Platform</span><span>Made for a world with more dimensions.</span></footer>
         </div>
+      </main>
+    </div>
 
-        <div class="card">
-          <h2>Create AR Object</h2>
-          <form id="arForm">
-            <label>
-              Title
-              <input id="arTitle" name="title" required />
-            </label>
-            <label>
-              Object Type
-              <input id="arType" name="objectType" value="cube" />
-            </label>
-            <label>
-              Latitude
-              <input id="arLat" name="latitude" type="number" step="0.0000001" required />
-            </label>
-            <label>
-              Longitude
-              <input id="arLng" name="longitude" type="number" step="0.0000001" required />
-            </label>
-            <button type="submit">Add AR Object</button>
-          </form>
-        </div>
-
-        <div class="card">
-          <h2>Route Search</h2>
-          <form id="routeForm">
-            <label>
-              Destination (text geocode)
-              <input id="routeDestination" name="destination" placeholder="Eindhoven station" required />
-            </label>
-            <button type="submit">Build Route from My Position</button>
-          </form>
-          <p id="routeStats">No active route.</p>
-        </div>
-      </section>
-
-      <section class="map-wrap">
-        <div id="map"></div>
-        <div id="arHud" class="hud">
-          <h3>AR Object Preview</h3>
-          <p>Select an AR object marker to render a 3D preview.</p>
-          <canvas id="arCanvas"></canvas>
-        </div>
-      </section>
-    </main>
-
-    <script
-      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-      crossorigin=""
-    ></script>
-    <script src="https://unpkg.com/three@0.168.0/build/three.min.js"></script>
-    <script src="/js/app.js"></script>
+    <dialog id="createDialog" class="create-dialog"><div class="dialog-heading"><div><p class="eyebrow text-teal-700 mb-2">CREATE SOMETHING NEW</p><h2 id="dialogTitle">Create marker</h2></div><button id="closeDialogBtn" class="icon-btn" aria-label="Close dialog"><svg class="icon"><use href="#i-close"/></svg></button></div><p class="panel-description mb-5">Choose a point on the map first, or enter coordinates below.</p>
+      <form id="markerForm">
+        <label class="form-label">Marker name<input id="markerName" placeholder="e.g. Meeting point" required maxlength="120"/></label>
+        <label class="form-label">Category<input id="markerType" list="markerCategories" value="poi" maxlength="60" placeholder="Choose or type a custom category"/></label>
+        <datalist id="markerCategories"><option value="poi">Point of interest</option><option value="shop">Shop</option><option value="meeting">Meeting point</option><option value="danger">Caution</option></datalist>
+        <div class="grid grid-cols-2 gap-3"><label class="form-label">Latitude<input id="markerLat" type="number" min="-90" max="90" step="0.0000001" placeholder="51.4408300" required/></label><label class="form-label">Longitude<input id="markerLng" type="number" min="-180" max="180" step="0.0000001" placeholder="5.4777800" required/></label></div>
+        <button class="btn btn-primary w-full mt-3" type="submit"><svg class="icon"><use href="#i-plus"/></svg>Save marker</button>
+      </form>
+      <form id="arForm" hidden>
+        <label class="form-label">Object title<input id="arTitle" placeholder="e.g. Welcome beacon" required maxlength="120"/></label>
+        <label class="form-label">Geometry<select id="arType"><option value="cube">Cube</option><option value="sphere">Sphere</option><option value="cone">Cone</option></select></label>
+        <div class="grid grid-cols-2 gap-3"><label class="form-label">Latitude<input id="arLat" type="number" min="-90" max="90" step="0.0000001" placeholder="51.4408300" required/></label><label class="form-label">Longitude<input id="arLng" type="number" min="-180" max="180" step="0.0000001" placeholder="5.4777800" required/></label></div>
+        <button class="btn btn-primary w-full mt-3" type="submit"><svg class="icon"><use href="#i-cube"/></svg>Save AR object</button>
+      </form>
+    </dialog>
+    <div id="toastRegion" class="toast-region" aria-live="polite" aria-atomic="false"></div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script type="module" src="/js/app.js"></script>
   </body>
-  </html>
+</html>
